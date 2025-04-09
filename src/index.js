@@ -84,11 +84,11 @@ function setupDesktopHoverBehavior(stateComponents) {
 
       state.style.display = 'flex';
       // Use requestAnimationFrame for smoother animation
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         if (data.isHovering) {
           state.style.opacity = 1;
         }
-      });
+      }, 5);
     };
 
     const stateLeaveHandler = () => {
@@ -118,9 +118,7 @@ function setupDesktopHoverBehavior(stateComponents) {
       if (state.style.display !== 'flex') {
         state.style.display = 'flex';
         setTimeout(() => {
-          requestAnimationFrame(() => {
-            state.style.opacity = 1;
-          });
+          state.style.opacity = 1;
         }, 5);
       } else {
         state.style.opacity = 1;
