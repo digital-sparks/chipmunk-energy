@@ -30,6 +30,26 @@ function initializeHoverEffects() {
   // First, clean up any existing event listeners
   cleanupEventListeners();
 
+  // Create a path ID to stateId mapping for faster lookups
+  const pathMap = new Map();
+  document.querySelectorAll('#svg-loader path[id]').forEach((path) => {
+    if (path.id && path.id.length >= 5) {
+      const prefix = path.id.substring(0, 5);
+      pathMap.set(prefix, path);
+    }
+  });
+
+  // Set 'active' attribute for all relevant states, regardless of mobile or desktop
+  stateComponents.forEach((state) => {
+    const stateId = state.getAttribute('state');
+    if (stateId) {
+      const mapState = pathMap.get(stateId);
+      if (mapState) {
+        mapState.setAttribute('active', '');
+      }
+    }
+  });
+
   // Then set up the appropriate behavior based on screen size
   if (isMobile) {
     stateComponents.forEach((state) => {
@@ -44,23 +64,14 @@ function initializeHoverEffects() {
     });
 
     // Then set up hover behavior
-    setupDesktopHoverBehavior(stateComponents);
+    setupDesktopHoverBehavior(stateComponents, pathMap);
   }
 
   isInitialized = true;
 }
 
 // Function to set up desktop hover behavior
-function setupDesktopHoverBehavior(stateComponents) {
-  // Create a path ID to stateId mapping for faster lookups
-  const pathMap = new Map();
-  document.querySelectorAll('#svg-loader path[id]').forEach((path) => {
-    if (path.id && path.id.length >= 5) {
-      const prefix = path.id.substring(0, 5);
-      pathMap.set(prefix, path);
-    }
-  });
-
+function setupDesktopHoverBehavior(stateComponents, pathMap) {
   stateComponents.forEach((state) => {
     const stateId = state.getAttribute('state');
     if (!stateId) return; // Skip if no state attribute
@@ -75,7 +86,6 @@ function setupDesktopHoverBehavior(stateComponents) {
     });
 
     const data = stateData.get(stateId);
-    mapState.setAttribute('active', '');
 
     // Create handler functions
     const stateEnterHandler = () => {
